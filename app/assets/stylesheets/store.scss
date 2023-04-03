@@ -1,0 +1,67 @@
+.store {
+  h1 {
+    margin: 0;
+    padding-bottom: 0.5em;
+    font: 250% Sans-Serif;
+    font-weight: bolder;
+    color: #226;
+    border-bottom: 3px dotted #77d;
+  }
+
+  .entry {
+    overflow: auto;
+    margin-top: 1em;
+    border-bottom: 1px dotted #77d;
+    height: 150px;
+  }
+
+  img {
+    width: 80px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    height: 100px;
+    position: absolute;
+  }
+
+  h3 {
+    font-size: 120%;
+    font-family: sans-serif;
+    margin-left: 100px;
+    margin-top: 0;
+    margin-bottom: 2px;
+    color: #277;
+  }
+
+  p, div.price_line {
+    margin-left: 100px;
+    margin-top: 0.5em;
+    margin-bottom: 0.8em;
+
+    form, div {
+      display: inline;
+    }
+  }
+
+  .price {
+    color: #44a;
+    font-weight: bold;
+  }
+
+  div.bt_line {
+    display: flex;
+    flex-direction: row-reverse;
+
+    .bt {
+      margin: 2px 5px 2px;
+      font-size: medium;
+      font-weight: bold;
+      color: white;
+      background-color: orange;
+    }
+
+    .bt:hover {
+      font-weight: bolder;
+      background-color: red;
+    }
+  }
+}

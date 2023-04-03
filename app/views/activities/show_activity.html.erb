@@ -1,0 +1,20 @@
+<div class="show_activities">
+  <h1>促销活动</h1>
+  <% @show_activities.each do |activity| %>
+    <div class="entry">
+      <div class="name">
+        <%= activity.name %>
+      </div>
+      <div class="discount">
+        折扣力度：
+        <%= number_to_percentage(activity.discount, precision: 0) %>
+      </div>
+      <div class="items">
+        促销产品：
+        <% activity.prompts.each do |prompt| %>
+          <span class="product"><%= prompt.product.title %>,</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

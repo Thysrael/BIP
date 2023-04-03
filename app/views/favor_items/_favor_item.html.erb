@@ -1,0 +1,24 @@
+<tr>
+  <td>
+    <%= image_tag(favor_item.product.image_url, class: 'list_image') %>
+  </td>
+
+  <td class="list_description">
+    <dl>
+      <dt><%= favor_item.product.title %></dt>
+      <dd><%= strip_tags(favor_item.product.description) %></dd>
+    </dl>
+  </td>
+
+  <td>
+    <dl>
+      <%= number_to_currency(favor_item.product.price) %>
+    </dl>
+    <dl>
+      <%= button_to 'Add to Cart', line_items_path(product_id: favor_item.product), remote:true %>
+    </dl>
+    <dl>
+      <%= button_to 'Remove', favor_item, :method => :delete %>
+    </dl>
+  </td>
+</tr>

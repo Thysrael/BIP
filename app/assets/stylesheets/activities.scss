@@ -1,0 +1,44 @@
+.activities {
+  .show_activities {
+    h1 {
+      margin: 0;
+      padding-bottom: 0.5em;
+      font: 250% Sans-Serif;
+      font-weight: bolder;
+      color: #226;
+      border-bottom: 3px dotted #77d;
+    }
+
+    .entry {
+      overflow: auto;
+      margin-top: 1em;
+      border-bottom: 1px dotted #77d;
+      height: 150px;
+
+      .name {
+        font-size: 200%;
+        font-weight: bolder;
+        margin-top: 0;
+        margin-bottom: 2px;
+        color: #277;
+      }
+
+      .discount {
+        font-size: 180%;
+        font-weight: bolder;
+        color: red;
+      }
+
+      .items {
+        font-weight: bold;
+        color: #277;
+        margin-top: 20px;
+        font-size: 150%;
+        .product {
+          color: #730E15;
+          margin: 5px;
+        }
+      }
+    }
+  }
+}

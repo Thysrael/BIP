@@ -1,0 +1,52 @@
+.carts, #side #cart {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+
+  .item_price, .total_line {
+    text-align: right;
+  }
+
+  .total_line .total_cell {
+    font-weight: bold;
+    border-top: 1px solid #595
+  }
+
+  h2 {
+    margin-left: 0;
+    text-align: center;
+    color: red;
+    text-shadow: 0 0 3px orange,0 0 3px orangered,0 0 3px orangered,0 0 3px orange;
+    background: linear-gradient(45deg,
+            #6a1b9a 10%, #4CAF50 0,
+            #4CAF50 20%, #6a1b9a 0,
+            #6a1b9a 30%, #4CAF50 0,
+            #4CAF50 40%, #6a1b9a 0,
+            #6a1b9a 50%, #4CAF50 0,
+            #4CAF50 60%, #6a1b9a 0,
+            #6a1b9a 70%, #4CAF50 0,
+            #4CAF50 80%, #6a1b9a 0,
+            #6a1b9a 90%, #4CAF50 0);
+  }
+
+  .bt_base {
+    display: flex;
+    margin: 3px;
+    align-items: end;
+    justify-items: right;
+
+    .bt {
+      margin: 1px 1px 2px;
+      font-size: medium;
+      font-weight: bold;
+      color: white;
+      background-color: orange;
+    }
+
+    .bt:hover {
+      font-weight: bolder;
+      background-color: red;
+    }
+  }
+
+}

@@ -1,0 +1,17 @@
+<div id="<%= dom_id prompt %>">
+  <div>
+    <strong>Product:</strong>
+    <%= prompt.product.title %>
+  </div>
+
+  <div>
+    <strong>Activity:</strong>
+    <%= prompt.activity.name %>
+  </div>
+
+  <div>
+    <strong>Discount</strong>
+    <%= number_to_percentage(prompt.activity.discount, precision: 0) %>
+  </div>
+
+</div>

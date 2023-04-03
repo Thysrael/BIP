@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>书籍目录</h1>
+
+<% cache @products do %>
+  <% @products.each do |product| %>
+    <% cache product do %>
+      <div class="entry">
+        <%= image_tag(product.image_url) %>
+        <h3><%= product.title %></h3>
+        <%= sanitize(product.description) %>
+        <div class="price_line">
+          <!-- 显示价格 -->
+          <span class="price"><%= number_to_currency(product.price) %></span>
+          <!-- 显示折扣 -->
+          <% product.prompts.each do |prompt| %>
+            <span> &times; <%= number_to_percentage(prompt.activity.discount, precision: 0) %></span>
+          <% end %>
+        </div>
+        <div class="bt_line">
+          <!-- 加入购物车 -->
+          <%= button_to '加入购物车', line_items_path(product_id: product), remote:true, class: 'bt' %>
+          <!-- 加入收藏夹 -->
+          <%= button_to '加入收藏夹', favor_items_path(product_id: product), class: 'bt' %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

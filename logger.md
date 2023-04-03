@@ -1,344 +1,8 @@
-# 魔法补完计划
+# Log
 
-[TOC]
+## 1 产品 Product
 
-# 1 个人信息
-
-| 条目     | 内容         |
-| -------- | ------------ |
-| 姓名     | 强生         |
-| 学号     | 20373249     |
-| 学院     | 计算机学院   |
-| 年级     | 大三         |
-| 项目名称 | 魔法补完计划 |
-
-----
-
-
-
-# 2 指标核验
-
-| 指标                 | 内容                                                         |
-| -------------------- | ------------------------------------------------------------ |
-| 选择内容             | 选择“简易电子商务系统”                                       |
-| 代码完整，可以部署   | 功能基本上与大作业要求大体一致，部署在 http://20373249.project.rubyapp.act.buaa.edu.cn:9000/ |
-| 无明显 bug           | 可以通过 `rake test` ，在部署前也通过 `test` 测试            |
-| 有设计文档           | 见下文**设计文档**一节                                       |
-| 有使用手册           | 见下文**使用手册**一节                                       |
-| 有较好的人机功能交互 | 通过 scss 和 JavaScript 优化了用户体验，见下文**使用手册**一节 |
-| 独立完成             | 不存在直接使用课件上的内容，抄袭的现象。参考了《Agile Web Development with Rails》的部分内容 |
-| 对下一届有参考价值   | 详细完整记录了自己增量式开发的每一个步骤（共 8800 字），可根据内容复现开发，见下文**开发日志**一节 |
-
----
-
-
-
-# 3 设计文档
-
-## 3.1 设计需求
-
-该项目名为**“魔法补完计划”**，是一个简易的电商平台，针对于一个书商，多个购书用户进行开发。
-
-### 3.1.1 买家侧需求
-
-#### 3.1.1.1 浏览商品
-
-用户可以浏览商家上架的所有商品，并且可以了解这些商品的基本信息，包括商品图片，商品描述，商品价格，商品折扣等信息。
-
-#### 3.1.1.2 购物车
-
-用户可以在浏览商品的时候，选择将商品加入购物车，以为后续的订单操作做准备，用户可以选择购物车中商品的种类和数量。同时购物车应当具有价格指示功能，可以计算当前购物车内商品的价格。
-
-#### 3.1.1.3 订单
-
-用户可以根据购物车中的内容生成订单，并且填写订单相关的信息，比如说收货人，地址，电话，邮箱等。
-
-#### 3.1.1.4 收藏夹
-
-用户可以将自己喜欢的产品加入收藏夹，可以浏览自己的收藏夹，可以删除收藏夹中的条目。
-
-#### 3.1.1.5 促销活动
-
-用户可以浏览促销活动，并且知悉促销活动都涉及哪些商品。
-
-### 3.1.2 卖家侧需求
-
-#### 3.1.2.1 CRUD 商品
-
-管理员可以对上平进行增删改查操作。
-
-#### 3.1.2.2 订单管理
-
-管理员获得所有订单的详细信息，并且可以删除订单信息。
-
-#### 3.1.2.3 促销管理
-
-可以创建促销活动，并且选择促销的力度，可以选择促销涉及的商品，并且可以取消活动。
-
-### 3.1.3 网站需求
-
-#### 3.1.3.1 权限管理
-
-对于不同身份的用户，需要有不同的权限，买家不能随意修改卖家商品的价格......
-
-#### 3.1.3.2 网站响应性
-
-网站应当具有良好的响应性，可以对用户的操作快速做出反应。
-
-#### 3.1.3.3 安全性
-
-网站应当保护用户的信息，避免用户信息泄露。
-
-#### 3.1.3.4 美观
-
-网站应当让用户有舒适自然的体验，同时具有一定的美学风格。
-
-## 3.2 开发环境
-
-- ruby: 3.1.2
-- rails: 7.0.4
-- database: sqlite 3.4
-- pc: manjaro
-- IDE: RubyMine
-
-## 3.3 概念模型
-
-![](README/book.png)
-
-可以看到， ER 图中存在多个“多对多”关系，这是有意为之的，相比原要求中要求的多个属性，我更想体验更加复杂关系的开发，所以实现了**收藏夹**和**促销活动**两个功能，这两个功能都是“多对多”关系的，相应的，消除了原要求中的“颜色，尺寸”等单独成表，这种方式过于冗余，有一种“为了凑个数而凑表”之嫌。
-
-## 3.4 数据模型
-
-`rails` 方便的提供了数据库的视图在 `projec/db/schema.rb` 中，我的如下所示，可以看到我一共是 9 张表。
-
-```ruby
-ActiveRecord::Schema[7.0].define(version: 2023_01_03_154008) do
-  create_table "activities", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "discount"
-  end
-
-  create_table "carts", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "favor_items", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_favor_items_on_product_id"
-    t.index ["user_id"], name: "index_favor_items_on_user_id"
-  end
-
-  create_table "line_items", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "cart_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "quantity", default: 1
-    t.integer "order_id"
-    t.index ["cart_id"], name: "index_line_items_on_cart_id"
-    t.index ["order_id"], name: "index_line_items_on_order_id"
-    t.index ["product_id"], name: "index_line_items_on_product_id"
-  end
-
-  create_table "orders", force: :cascade do |t|
-    t.string "name"
-    t.text "address"
-    t.string "email"
-    t.string "phone"
-    t.integer "pay_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "products", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "image_url"
-    t.decimal "price", precision: 8, scale: 2
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "prompts", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "activity_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["activity_id"], name: "index_prompts_on_activity_id"
-    t.index ["product_id"], name: "index_prompts_on_product_id"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "password_digest"
-    t.integer "role"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_foreign_key "favor_items", "products"
-  add_foreign_key "favor_items", "users"
-  add_foreign_key "line_items", "carts"
-  add_foreign_key "line_items", "orders"
-  add_foreign_key "line_items", "products"
-  add_foreign_key "prompts", "activities"
-  add_foreign_key "prompts", "products"
-end
-```
-
-## 3.5 设计特色
-
-### 3.5.1 多对多关系
-
-概念模型中大量采用了多对多关系，这是对于 blog4 中 FollowShip 的拓展。
-
-### 3.5.2 测试 test
-
-对于增量式开发，基本上每增加一个功能，都完成了一个对应的单元测试，最终可以通过 `test` 。
-
-### 3.5.3 响应性
-
-利用了 `Ajax` 的知识，尽量提高了页面的响应速度。如下面的代码
-
-```html
-<% cache @products do %>
-  <% @products.each do |product| %>
-    <% cache product do %>
-      <div class="entry">
-        <%= image_tag(product.image_url) %>
-        <h3><%= product.title %></h3>
-        <%= sanitize(product.description) %>
-        <div class="price_line">
-          <!-- 显示价格 -->
-          <span class="price"><%= number_to_currency(product.price) %></span>
-          <!-- 显示折扣 -->
-          <% product.prompts.each do |prompt| %>
-            <span> &times; <%= number_to_percentage(prompt.activity.discount, precision: 0) %></span>
-          <% end %>
-        </div>
-        <div class="bt_line">
-          <!-- 加入购物车 -->
-          <%= button_to '加入购物车', line_items_path(product_id: product), remote:true, class: 'bt' %>
-          <!-- 加入收藏夹 -->
-          <%= button_to '加入收藏夹', favor_items_path(product_id: product), class: 'bt' %>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
-<% end %>
-```
-
-----
-
-
-
-# 4 使用手册 & 功能展示
-
-## 4.1 非登录状态
-
-在非登录状态可以进行一些网页的浏览和功能，比如说商品目录
-
-![image-20230105110222171](README/image-20230105110222171.png)
-
-但是比如说需要支付订单的时候，就会自动重定向到登录界面。
-
-## 4.2 登录
-
-登录界面如图所示
-
-![image-20230105110333705](README/image-20230105110333705.png)
-
-有登录和注册两个选项，对于已经有账号的用户，可以直接登录，正确的密码即可登录，错误的密码会报错，如下所示
-
-![image-20230105110618864](README/image-20230105110618864.png)
-
-正确的密码可以登录，登录后会在左侧面板上显示用户名和登出按键
-
-![image-20230105110723041](README/image-20230105110723041.png)
-
-可以看到，随着登录功能，用户的权限增大了（上部导航栏导航增多）
-
-## 4.3 注册
-
-可以选择注册界面需要输入用户名，密码，并且确认密码，同时需要输入自己的身份。
-
-![image-20230105110929477](README/image-20230105110929477.png)
-
-## 4.4 购物车
-
-用户浏览商品的时候，可以将商品加入购物车，购物车面板会在左侧出现，同时还会显示经过折扣后的价格和购物车的价格总值，用户可以选择清空购物车或者根据购物车中的内容生成订单
-
-![image-20230105111832195](README/image-20230105111832195.png)
-
-## 4.5 订单
-
-用户点击“结算”按键，就可以进入订单信息完善界面，通过填写信息生成订单
-
-![image-20230105111912004](README/image-20230105111912004.png)
-
-
-
-在管理侧，可以查看订单信息：
-
-订单总览
-
-![image-20230105113505676](README/image-20230105113505676.png)
-
-订单详情：
-
-![image-20230105113526332](README/image-20230105113526332.png)
-
-## 4.6 收藏
-
-用户可以点击商店界面的“加入收藏夹”按钮，即可收藏该商品，在“收藏”这个导航中可以看到用户收藏的所有商品
-
-![image-20230105114641256](README/image-20230105114641256.png)
-
-用户可以选择将收藏品加入购物车，同时还可以将收藏品从收藏夹中移除。
-
-## 4.7 促销
-
-每个促销活动会涉及一些商品，会让商品有一些折扣力度，这些会反应到客户的实际消费中，客户可以在商店界面看到每个商品的折扣力度：
-
-![image-20230105115612997](README/image-20230105115612997.png)
-
-同时用户也可以直接浏览当前的活动，看到涉及的产品和折扣力度
-
-![image-20230105115647072](README/image-20230105115647072.png)
-
-在管理侧，可以创建活动并且选择加入活动的产品
-
-![image-20230105115809680](README/image-20230105115809680.png)
-
-![image-20230105115818279](README/image-20230105115818279.png)
-
-## 4.8 商品管理
-
-管理员可以对产品进行增删改查操作
-
-![image-20230105115837059](README/image-20230105115837059.png)
-
-## 4.9 用户管理
-
-管理员可以对用户进行增删改查操作
-
-![image-20230105120139006](README/image-20230105120139006.png)
-
----
-
-
-
-# 开发日志
-
-## 5.1 产品 Product
-
-### 5.1.1 创建 Product
+### 1.1 创建 Product
 
 创建名为 `project` 的 rails 应用
 
@@ -395,7 +59,7 @@ end
 
 可以看到基本上与 `migration` 是一致的，原来的 `t.timestamps` 时间戳变成了 `created_at` 和 `updated_at` 两个属性。此外主键被叫做 `product_id` ，并没有在这里显示，这应该是一种默认配置。
 
-### 5.1.2 本地服务器
+### 1.2 本地服务器
 
 我们输入如下命令，就可以在本地启动服务器
 
@@ -412,7 +76,7 @@ rails s
 
 其中的 `Puma` 似乎是一个线程管理器，每个线程都用于处理来自客户端的一个 `request` 。
 
-### 5.1.3 表单
+### 1.3 表单
 
 `app/views/products/_form.html.erb` 是一个局部渲染文件，用于当做 `product` 信息的表单，这个表单会在 `new.html.erb, edit.html.erb` 这两个文件中用到，如下所示
 
@@ -491,7 +155,7 @@ rails s
 <%= form.text_area :description, rows: 10, cols: 60 %>
 ```
 
-### 5.1.4 seeds
+### 1.4 seeds
 
 如果数据库不是同一个（一般本地开发多个，云端一个），那么测试数据就成了“个人私有”的，显然是低效的，我们可以给数据库一组“初始值“（也就是种子，seeds），这组初始值我们可以在 `db/seeds.rb` 中给出，如下所示
 
@@ -518,7 +182,7 @@ rake db:seed
 
 就可以添加这个数据。
 
-### 5.1.5 SCSS
+### 1.5 SCSS
 
 ​	当前的 `products` 页面过于丑陋，可以考虑给所有的产品界面一组样式，这里我们用 `scss` 实现，在 `app/assets/stylesheets/` 中创建 `products.scss` 并写入下面的内容
 
@@ -639,7 +303,7 @@ bundle install
 <%= link_to 'New product', new_product_path %>
 ```
 
-### 5.1.6 验证
+### 1.6 验证
 
 可以在模型层对于模型的属性添加验证，对于 `Product` 来说有如下验证
 
@@ -668,7 +332,7 @@ validate [属性名], [验证内容]
 - `uniqueness`
 - `uniqueness`
 
-### 5.1.7 路由设置
+### 1.7 路由设置
 
 为了更好的展示产品（而不是需要通过 `get` 路由访问产品列表），我们可以另外再从用户的角度完善一个页面，这需要借助一个一个新的控制器（在后面的开发中，它被定义为“付费购买用户所使用的控制器”），在终端输入
 
@@ -718,7 +382,7 @@ resoureces: products
 - PUT：上传资源
 - DELETE：删除资源
 
-### 5.1.8 美化商品目录
+### 1.8 美化商品目录
 
 在 `store#index` 中补充如下代码，表示按字典序展示所有的 `Product`
 
@@ -801,7 +465,7 @@ end
 }
 ```
 
-### 5.1.9 页面布局
+### 1.9 页面布局
 
 修改 `layouts/application.html.erb` 加入侧边栏和顶栏
 
@@ -929,9 +593,9 @@ body, body > p, body > ol, body > ul, body > td {
 
 
 
-## 5.2 购物车 Cart
+## 2 购物车 Cart
 
-### 5.2.1 Cart 模型
+### 2.1 Cart 模型
 
 创建购物车
 
@@ -942,7 +606,7 @@ rake db:migrate
 
 可以看到 `Cart` 基本上没有任何属性，这是因为当前开发的时候我们还不需要它们。
 
-### 5.2.2 LineItem 商品模型
+### 2.2 LineItem 商品模型
 
 我们称在购物车中东西为“商品”，与之对应的还有“产品 Product”，两者的区别是 Product 具有某种静态的属性，没有办法说“两种香皂”，但是很容易形容“两个香皂”。`LineItem` 依附 `Product` 存在，同时也依附 `Cart`。
 
@@ -998,7 +662,7 @@ test "can't delete product in cart" do
 end
 ```
 
-### 5.2.3 会话
+### 2.3 会话
 
 出于一些原因，我们需要在会话中保存 `cart_id`，用户每添加一个商品，我们需要从会话中把 `cart_id` 取出来，然后通过标识符在数据库中查找购物车。
 
@@ -1020,7 +684,7 @@ end
 
  `app/controllers/concerns/` 这个文件夹中一般来说是一些独立的逻辑模块或者是重复使用的功能模块，这样可以提升代码的可读性以及维护性。
 
-### 5.2.4 “加入购物车”
+### 2.4 “加入购物车”
 
 我们可以将某个 `Product` 加入某个 `Cart` ，其本质是利用 `Product` 产生一个 `LineItem`。
 
@@ -1092,7 +756,7 @@ class LineItemsController < ApplicationController
 </ul>
 ```
 
-### 5.2.5 加入数量
+### 2.5 加入数量
 
 对于一个商品来说，之前的设计是有问题的，比如说我们买了两个香皂，那么不应该是“香皂，香皂”的显示两遍，而是应该“2 x 香皂”这样的显示，所以对于 `LineItem` 来说，数量是极其必要的。
 
@@ -1182,7 +846,7 @@ class CombineItemsInCart < ActiveRecord::Migration[7.0]
 end
 ```
 
-### 5.2.6 清空购物车
+### 2.6 清空购物车
 
 清空购物车的本质是将当前的购物车删除，所以先加入“清空按钮”在 `show.html` 中
 
@@ -1213,7 +877,7 @@ end
 
 并且补充相应的方法即可。
 
-### 5.2.7 局部渲染
+### 2.7 局部渲染
 
 我们希望在侧边栏也有购物车信息，所以我们考虑利用局部渲染。具体的知识在前面有，所以按照递归的思路，我们需要在 `application.html.erb` 中加入购物车
 
@@ -1280,7 +944,7 @@ class StoreController < ApplicationController
 end
 ```
 
-### 5.2.8 Ajax 购物车
+### 2.8 Ajax 购物车
 
 现在每次进行 `Add Cart` 操作，本质都是在渲染整个 `application.html.erb` 页面，这无疑是低效的，所以考虑只渲染侧边栏的购物车部分。
 
@@ -1326,7 +990,7 @@ $('#cart').html("<%= j render(@cart) %>")
 
 这个脚本描述了将 `id = cart` 的节点替换成 `render(@cart)` 的操作。
 
-### 5.2.9 突出显示
+### 2.9 突出显示
 
 为了增强美工性，考虑引入 `jQuery-ui`。
 
@@ -1382,7 +1046,7 @@ $('#current_item').css({'background-color': '#88ff88'}).
                   animate({'background-color': '#114411'}, 1000)
 ```
 
-### 5.2.10 辅助方法
+### 2.10 辅助方法
 
 我们希望可以在购物车内商品数量为 0 的时候，不显示购物车。
 
@@ -1425,9 +1089,9 @@ if ($('#cart tr').length === 1) { $('cart').show('blind', 1000) }
 
 
 
-## 5.3 订单 Order
+## 3 订单 Order
 
-### 5.3.1 Order 模型
+### 3.1 Order 模型
 
 订单模型本质上信息全都是收货的信息，订单具体有什么商品，其实并不是由 Order 决定的，而是由 LineItem 决定的。因此建立如下如下模型
 
@@ -1497,7 +1161,7 @@ class Order < ApplicationRecord
 end
 ```
 
-### 5.3.2 生成订单
+### 3.2 生成订单
 
 生成订单的过程是一个将购物车中所有的 `LineItem` 都放到 `Order` 中的一个过程，我们可以用一个方法描述这个过程，定义在 `model` 中。
 
@@ -1656,7 +1320,7 @@ end
   end
 ```
 
-### 5.3.3 订单展示
+### 3.3 订单展示
 
 作为管理端，需要看到所有的订单，所以考虑修改 `index.html.erb` 这个模板，将其改成表格形式会更漂亮一些，同时加上一些操作和跳转。
 
@@ -1724,9 +1388,9 @@ end
 
 
 
-## 5.4 用户 User
+## 4 用户 User
 
-### 5.4.1 User 模型
+### 4.1 User 模型
 
 考虑用户具有用户名，密码，角色三个属性，模型如下
 
@@ -1775,7 +1439,7 @@ end
 
 注意如果希望 `role` 作为一个枚举变量，那么这里一定要定义 `enum` 的名字为 `role`，不能叫 `role_type` 或者其他任何的名字，都不会让其具有枚举的效果，这大概就是神秘的 rails 吧。
 
-### 5.4.2 控制器与页面
+### 4.2 控制器与页面
 
 身份验证就是登录相关的功能，这里需要新建两个控制器，`sessions` 用于为登录和登出提供支持，`admin` 用于为管理员提供欢迎界面。
 
@@ -1793,7 +1457,7 @@ rails generate controller Admin index
 
 这也启发我，其实写一个页面就是写一个 controller 和一个 view 而已，这是因为 view 似乎没有办法单独成为一个路由资源。
 
-### 5.4.3 登录登出
+### 4.3 登录登出
 
 登入功能就是填一个表单，所以在 `new.html.erb` 中写入
 
@@ -1883,7 +1547,7 @@ rails generate controller Admin index
   end
 ```
 
-### 5.4.4 访问限制
+### 4.4 访问限制
 
 访问限制可以在 `application_controller.rb` 中利用 `before_action` 实现
 
@@ -1938,7 +1602,7 @@ class ActiveSupport::TestCase
 end
 ```
 
-### 5.4.5 权限显示
+### 4.5 权限显示
 
 我们希望对于管理者，可以看到更多的界面，而对于非管理者，则不需要看到这些界面
 
@@ -1978,13 +1642,13 @@ end
 
 
 
-## 5.5 收藏夹 Favourite
+## 5 收藏夹 Favourite
 
-### 5.5.1 Favourite 模型
+### 5.1 Favourite 模型
 
 每个用户都有一个收藏夹，二者是一对一关系，所以没有必要单独做一个实体，可以直接使用 `User` 模型。但是在实际思考的时候，却应当有收藏夹这个模型，比较方便思考。
 
-### 5.5.2 FavorItem 收藏品模型
+### 5.2 FavorItem 收藏品模型
 
 收藏品模型描述的是 `Product` 和 `Favourite` 之间的“多对多关系”，所以需要这样建立模型
 
@@ -2012,7 +1676,7 @@ has_many :favor_items, dependent: :destroy
   end
 ```
 
-### 5.5.3 加入收藏夹
+### 5.3 加入收藏夹
 
 在 `store` 界面上，除了有“加入购物车”之外，应当有“加入收藏夹”的功能，可以如此修改 `store` 界面
 
@@ -2051,7 +1715,7 @@ has_many :favor_items, dependent: :destroy
     end
 ```
 
-### 5.5.4 收藏夹展示
+### 5.4 收藏夹展示
 
 类似于一个产品目录的子集，可以写 `index.html.erb` 
 
@@ -2102,9 +1766,9 @@ has_many :favor_items, dependent: :destroy
 
 
 
-## 5.6 促销活动 Activity
+## 6 促销活动 Activity
 
-### 5.6.1 Activity 模型
+### 6.1 Activity 模型
 
 促销活动只有一个属性就是名字，具体的促销也在这里体现体现，所以应当在终端中输入如下示例
 
@@ -2113,7 +1777,7 @@ rails generate scaffold Activity name:string disconut:integer
 rake db:migrate
 ```
 
-### 5.6.2 Prompt 促销项模型
+### 6.2 Prompt 促销项模型
 
 促销项都是外键，用于关联 `Product` 产品和 `Activity` 活动，形成“活动-产品” 的多对多关系。
 
@@ -2134,7 +1798,7 @@ has_many :prompts, dependent: :destroy
 has_many :prompts, dependent: :destroy
 ```
 
-### 5.6.3 新建活动
+### 6.3 新建活动
 
 一个活动由本身和它包括的商品组成，在创建的时候，可以先创建好活动，确定活动的名称和折扣力度，然后再向这个活动添加涉及的商品。创建活动这个操作只有管理员可以干，所以我们用一个管理链接指向 `activities` 的展示页面
 
@@ -2250,7 +1914,7 @@ has_many :prompts, dependent: :destroy
   end
 ```
 
-### 5.6.4 实现折扣
+### 6.4 实现折扣
 
 促销大概需要两个两个机制
 
@@ -2298,7 +1962,7 @@ end
 
 即可。
 
-### 5.6.5 展示折扣
+### 6.5 展示折扣
 
 对于普通用户来说，没有权限建立活动，但是有权限浏览活动，所以可以实现一个活动界面用于浏览，但是考虑到 `index.html.erb` 已经用于给管理者新建活动使用了，所以考虑新开设一个界面，在控制器中新定义一个方法
 

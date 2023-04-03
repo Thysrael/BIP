@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>魔法补完计划</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+
+<body class='<%= controller.controller_name %>'>
+  <!-- 顶部栏 -->
+  <div id="banner">
+    <%= image_tag "logo.png", class: 'img1'%>
+    <%= image_tag "logo2.png", class: 'img2'%>
+    <!-- 普通链接 -->
+    <div class="nav">
+      <%= link_to '商店', store_index_url, class: 'nav_block' %>
+      <%= link_to '收藏', favor_items_path, class: 'nav_block' %>
+      <%= link_to '促销', activity_show_path, class: 'nav_block' %>
+      <!-- 管理链接 -->
+      <% if current_user and current_user.role == 'Admin' %>
+        <%= link_to '订单', orders_path, class: 'admin_nav_block' %>
+        <%= link_to '产品', products_path, class: 'admin_nav_block' %>
+        <%= link_to '用户', users_path, class: 'admin_nav_block' %>
+        <%= link_to '活动', activities_path, class: 'admin_nav_block' %>
+      <% end %>
+    </div>
+    <%= image_tag "blood.png", class: 'img3'%>
+  </div>
+
+  <!-- 顶部导航栏之下的区域 -->
+  <div id="columns">
+    <!-- 侧边栏 -->
+    <div id="side">
+      <!-- 购物车 -->
+      <div id="cart_border">
+        <div id="cart">
+          <% if @cart %>
+            <%= render @cart %>
+          <% end %>
+        </div>
+      </div>
+
+      <% if current_user %>
+        <div class="svg-wrapper">
+          <svg height="60" width="320">
+            <rect class="shape" height="60" width="320"/>
+            <div class="text">
+              <%= current_user.name %>
+            </div>
+          </svg>
+        </div>
+      <% end %>
+
+      <!-- 登录登出 -->
+      <div class="log">
+        <% if current_user %>
+          <%= link_to 'Logout', logout_path, method: :delete %>
+        <% else %>
+          Please <%= link_to 'Login', login_url %>
+        <% end %>
+      </div>
+    </div>
+
+
+    <!-- 主体 -->
+    <div id="main">
+      <!-- yield 似乎就是 ruby 中的 yield -->
+      <%= yield %>
+    </div>
+  </div>
+</body>
+</html>

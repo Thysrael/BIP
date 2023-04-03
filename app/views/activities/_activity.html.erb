@@ -1,0 +1,29 @@
+<div id="<%= dom_id activity %>">
+  <!-- 活动的基本信息 -->
+  <div>
+    <strong>Name:</strong>
+    <%= activity.name %>
+  </div>
+  <div>
+    <strong>Discount:</strong>
+    <%= number_to_percentage(activity.discount, precision: 0) %>
+  </div>
+
+  <!-- 这里展示了产品列表，可以将产品添加到活动中 -->
+  <% Product.all.each do |product| %>
+      <div class="entry">
+        <h3><%= product.title %></h3>
+        <div class="price_line">
+          <!-- 加入活动 -->
+          <%= button_to 'Add to Activity', prompts_path(product_id: product, activity_id: activity)%>
+        </div>
+      </div>
+  <% end %>
+
+  <!-- 已经加入活动的产品 -->
+  <% activity.prompts.each do |prompt| %>
+    <div>
+      <%= prompt.product.title %>
+    </div>
+  <% end %>
+</div>

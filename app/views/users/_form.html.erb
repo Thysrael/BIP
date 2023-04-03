@@ -1,0 +1,44 @@
+<div class="project_form">
+  <%= form_with(model: user) do |form| %>
+    <% if user.errors.any? %>
+      <div style="color: red">
+        <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+        <ul>
+          <% user.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+
+    <fieldset>
+      <!-- 标题 -->
+      <legend>Enter User Details</legend>
+      <div class="field">
+        <%= form.label :name, style: "display: block" %>
+        <%= form.text_field :name, size: 40 %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password, style: "display: block" %>
+        <%= form.password_field :password, size: 40 %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password_confirmation, style: "display: block" %>
+        <%= form.password_field :password_confirmation, size: 40 %>
+      </div>
+
+      <div>
+        <%= form.label :role, style: "display: block" %>
+        <%= form.select :role, User.roles.keys %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

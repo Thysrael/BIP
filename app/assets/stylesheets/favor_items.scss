@@ -1,0 +1,36 @@
+.favor_items {
+  h1 {
+    margin: 0;
+    padding-bottom: 0.5em;
+    font: 250% Sans-Serif;
+    font-weight: bolder;
+    color: #226;
+    border-bottom: 3px dotted #77d;
+  }
+  table tr td{
+    padding: 5px;
+    vertical-align: top;
+  }
+
+  .list_image {
+    width: 70px;
+    height: 80px;
+  }
+
+  .list_description {
+    width: 1000px;
+    dl {
+      margin: 0;
+    }
+
+    dt {
+      color: #244;
+      font-weight: bold;
+      font-size: larger;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+}

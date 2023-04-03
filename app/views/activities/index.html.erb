@@ -1,0 +1,27 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Activities</h1>
+
+<div id="activities">
+  <% @activities.each do |activity| %>
+    <div>
+      Name:
+      <%= activity.name %>
+    </div>
+    <div>
+      Discount:
+      <%= number_to_percentage(activity.discount, precision: 0) %>
+    </div>
+    <div class="items">
+      促销产品：
+      <% activity.prompts.each do |prompt| %>
+        <span class="product"><%= prompt.product.title %>,</span>
+      <% end %>
+    </div>
+    <p>
+      <%= link_to "Show this activity", activity %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New activity", new_activity_path %>
